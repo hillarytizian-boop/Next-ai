@@ -152,8 +152,8 @@ sudo systemctl start tizian-ai
 | `/api/admin/delete/<id>` | Delete user (DELETE) |
 
 Default admin credentials (change in `.env`):
-- Email: `admin@tizian.ai`
-- Password: `TizianAdmin2025!`
+- 
+- 
 
 ---
 
