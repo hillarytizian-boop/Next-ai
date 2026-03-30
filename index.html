@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tizian AI — Your 24/7 Business Assistant</title>
+<meta name="description" content="AI-powered business assistant that converts visitors into clients automatically, 24/7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070f;--bg2:#0c0c1a;--card:#10101e;--border:#1e1e35;
+  --gold:#f0b429;--gold2:#ffd166;--blue:#4f8ef7;--cyan:#00d4ff;
+  --green:#25d366;--red:#f05454;
+  --text:#e8e8f5;--muted:#8888aa;--dim:#3a3a55;
+  --radius:14px;--shadow:0 8px 40px rgba(0,0,0,.6);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-weight:400;overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+
+/* ── SCROLLBAR ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
+
+/* ── NOISE TEXTURE ───────────────────────────────────────────────────────── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9000;opacity:.5
+}
+
+/* ── NAV ─────────────────────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:1rem 5%;display:flex;align-items:center;gap:2rem;
+  transition:background .35s,backdrop-filter .35s,border-color .35s;
+  border-bottom:1px solid transparent;
+}
+nav.scrolled{background:rgba(7,7,15,.92);backdrop-filter:blur(20px);border-color:var(--border)}
+.nav-logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em}
+.nav-links{display:flex;gap:2rem;margin-left:auto;list-style:none}
+.nav-links a{font-size:.875rem;color:var(--muted);transition:color .2s;letter-spacing:.01em}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;gap:.75rem;align-items:center}
+.btn-nav-login{padding:.5rem 1.2rem;border:1px solid var(--border);border-radius:8px;font-size:.8rem;color:var(--muted);transition:all .2s;font-family:'Inter',sans-serif}
+.btn-nav-login:hover{border-color:var(--gold);color:var(--gold)}
+.btn-nav-cta{padding:.55rem 1.4rem;background:linear-gradient(135deg,var(--gold),#e09800);border-radius:8px;font-size:.8rem;font-weight:600;color:#07070f;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(240,180,41,.4)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:8rem 5% 5rem;
+  position:relative;overflow:hidden;
+}
+.hero-glow{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,rgba(79,142,247,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 70%,rgba(240,180,41,.07) 0%,transparent 50%),
+    radial-gradient(ellipse 40% 40% at 80% 80%,rgba(0,212,255,.06) 0%,transparent 50%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);
+  border-radius:50px;padding:.35rem 1rem;font-size:.78rem;color:var(--blue);
+  margin-bottom:1.8rem;animation:fadeUp .8s ease forwards;opacity:0;
+}
+.hero-badge i{font-size:.7rem}
+h1.hero-title{
+  font-family:'Outfit',sans-serif;font-weight:900;
+  font-size:clamp(2.8rem,7vw,6rem);line-height:1.05;letter-spacing:-.03em;
+  margin-bottom:1.5rem;animation:fadeUp .8s .15s ease forwards;opacity:0;
+}
+.hero-title span{
+  background:linear-gradient(135deg,var(--gold),var(--gold2),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  max-width:620px;font-size:1.1rem;color:var(--muted);line-height:1.75;
+  margin:0 auto 2.5rem;animation:fadeUp .8s .3s ease forwards;opacity:0;
+}
+.hero-cta{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp .8s .45s ease forwards;opacity:0;
+}
+.btn-primary{
+  padding:.9rem 2.2rem;background:linear-gradient(135deg,var(--gold),#e09800);
+  border-radius:10px;font-weight:700;font-size:.95rem;color:#07070f;
+  display:inline-flex;align-items:center;gap:.6rem;
+  transition:all .25s;font-family:'Outfit',sans-serif;letter-spacing:-.01em;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(240,180,41,.45)}
+.btn-whatsapp{
+  padding:.9rem 2.2rem;background:#25d366;border-radius:10px;
+  font-weight:700;font-size:.95rem;color:#fff;
+  display:inline-flex;align-items:center;gap:.6rem;
+  transition:all .25s;font-family:'Outfit',sans-serif;letter-spacing:-.01em;
+}
+.btn-whatsapp:hover{transform:translateY(-2px);background:#1ebe57;box-shadow:0 8px 30px rgba(37,211,102,.4)}
+.hero-stats{
+  display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;
+  margin-top:4rem;animation:fadeUp .8s .6s ease forwards;opacity:0;
+}
+.stat{text-align:center}
+.stat-num{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-lbl{font-size:.78rem;color:var(--muted);margin-top:.2rem;letter-spacing:.05em;text-transform:uppercase}
+
+/* ── LOGOS TICKER ─────────────────────────────────────────────────────────── */
+.logos-section{padding:3rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden}
+.logos-label{text-align:center;font-size:.72rem;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem}
+.logos-track{display:flex;gap:4rem;animation:ticker 20s linear infinite;width:max-content;align-items:center}
+.logos-track span{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;color:var(--dim);letter-spacing:.05em;white-space:nowrap}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTIONS ─────────────────────────────────────────────────────────────── */
+section{padding:6rem 5%}
+.section-label{display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);
+  border-radius:50px;padding:.3rem .9rem;font-size:.72rem;color:var(--blue);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem}
+.section-title{font-family:'Outfit',sans-serif;font-weight:800;
+  font-size:clamp(1.8rem,4vw,3rem);line-height:1.15;letter-spacing:-.03em;margin-bottom:1rem}
+.section-sub{font-size:1rem;color:var(--muted);max-width:560px;line-height:1.75}
+.text-center{text-align:center}
+.text-center .section-sub{margin:0 auto}
+.grad-text{background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── FEATURES ─────────────────────────────────────────────────────────────── */
+#features{background:var(--bg2)}
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1.5rem;margin-top:3.5rem;
+}
+.feature-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2rem;transition:all .3s;position:relative;overflow:hidden;
+}
+.feature-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(240,180,41,.05),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.feature-card:hover{border-color:rgba(240,180,41,.35);transform:translateY(-4px);box-shadow:var(--shadow)}
+.feature-card:hover::before{opacity:1}
+.feature-icon{
+  width:52px;height:52px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(240,180,41,.15),rgba(240,180,41,.05));
+  border:1px solid rgba(240,180,41,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;color:var(--gold);margin-bottom:1.2rem;
+}
+.feature-card h3{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:.6rem}
+.feature-card p{font-size:.875rem;color:var(--muted);line-height:1.7}
+
+/* ── HOW IT WORKS ─────────────────────────────────────────────────────────── */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-top:3.5rem;position:relative}
+.steps-grid::before{
+  content:'';position:absolute;top:30px;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),var(--dim),var(--border),transparent);
+}
+.step{text-align:center;position:relative}
+.step-num{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#e09800);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Outfit',sans-serif;font-weight:800;font-size:1.3rem;color:#07070f;
+  margin:0 auto 1.2rem;position:relative;z-index:1;
+  box-shadow:0 4px 20px rgba(240,180,41,.4);
+}
+.step h3{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.5rem}
+.step p{font-size:.85rem;color:var(--muted);line-height:1.7}
+
+/* ── PRICING ─────────────────────────────────────────────────────────────── */
+#pricing{background:var(--bg2)}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:3.5rem;max-width:1000px;margin-left:auto;margin-right:auto}
+.pricing-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:2.5rem;transition:all .3s;position:relative;
+}
+.pricing-card.popular{
+  border-color:var(--gold);
+  background:linear-gradient(180deg,rgba(240,180,41,.07) 0%,var(--card) 100%);
+}
+.popular-badge{
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--gold),#e09800);color:#07070f;
+  font-size:.7rem;font-weight:700;padding:.3rem 1rem;border-radius:50px;
+  font-family:'Outfit',sans-serif;letter-spacing:.05em;white-space:nowrap;
+}
+.price-plan{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.price-amount{font-family:'Outfit',sans-serif;font-weight:900;font-size:3rem;line-height:1;letter-spacing:-.03em;margin-bottom:.3rem}
+.price-amount sup{font-size:1.2rem;vertical-align:super}
+.price-amount span{font-size:1rem;font-weight:400;color:var(--muted)}
+.price-desc{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:2rem}
+.price-features li{display:flex;align-items:center;gap:.6rem;font-size:.875rem;color:var(--muted)}
+.price-features li i{color:var(--gold);font-size:.8rem;flex-shrink:0}
+.price-features li.muted i{color:var(--dim)}
+.price-features li.muted{color:var(--dim)}
+.btn-plan{
+  display:block;text-align:center;padding:.9rem;border-radius:10px;
+  font-weight:700;font-size:.9rem;transition:all .25s;font-family:'Outfit',sans-serif;
+}
+.btn-plan-primary{background:linear-gradient(135deg,var(--gold),#e09800);color:#07070f}
+.btn-plan-primary:hover{box-shadow:0 6px 25px rgba(240,180,41,.4);transform:translateY(-2px)}
+.btn-plan-outline{border:1px solid var(--border);color:var(--muted)}
+.btn-plan-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── PAYMENT INFO ─────────────────────────────────────────────────────────── */
+.payment-info{
+  background:var(--card);border:1px solid rgba(240,180,41,.25);
+  border-radius:var(--radius);padding:2rem;margin-top:2.5rem;
+  max-width:700px;margin-left:auto;margin-right:auto;text-align:center;
+}
+.payment-info h4{font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:.6rem;font-size:1rem}
+.payment-info p{font-size:.875rem;color:var(--muted);line-height:1.8}
+.payment-info strong{color:var(--gold)}
+.payment-steps{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem}
+.pay-step{
+  display:flex;align-items:center;gap:.5rem;
+  background:rgba(240,180,41,.07);border:1px solid rgba(240,180,41,.15);
+  border-radius:8px;padding:.5rem 1rem;font-size:.8rem;color:var(--muted);
+}
+.pay-step i{color:var(--gold)}
+
+/* ── CTA SECTION ─────────────────────────────────────────────────────────── */
+.cta-section{
+  text-align:center;background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(240,180,41,.05));
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.cta-section .section-title{font-size:clamp(1.8rem,4vw,2.8rem)}
+.cta-section .section-sub{margin-bottom:2.5rem}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ── CONTACT ─────────────────────────────────────────────────────────────── */
+#contact{background:var(--bg2)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:3rem}
+.contact-items{display:flex;flex-direction:column;gap:1.2rem}
+.contact-item{
+  display:flex;align-items:flex-start;gap:1rem;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.5rem;
+}
+.contact-item-icon{
+  width:42px;height:42px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.contact-item-icon.gold{background:rgba(240,180,41,.1);color:var(--gold)}
+.contact-item-icon.green{background:rgba(37,211,102,.1);color:var(--green)}
+.contact-item-icon.blue{background:rgba(79,142,247,.1);color:var(--blue)}
+.contact-item h4{font-family:'Outfit',sans-serif;font-weight:600;font-size:.9rem;margin-bottom:.2rem}
+.contact-item p{font-size:.82rem;color:var(--muted)}
+.contact-item a{color:var(--gold);font-size:.85rem}
+
+.contact-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}
+.contact-form h3{font-family:'Outfit',sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:.4rem;letter-spacing:.03em}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:.75rem 1rem;color:var(--text);
+  font-family:'Inter',sans-serif;font-size:.875rem;outline:none;
+  transition:border-color .2s;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group textarea{min-height:100px;resize:vertical}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--dim)}
+.btn-contact{
+  width:100%;padding:.9rem;background:linear-gradient(135deg,var(--gold),#e09800);
+  border:none;border-radius:10px;font-weight:700;font-size:.9rem;
+  color:#07070f;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .25s;
+}
+.btn-contact:hover{box-shadow:0 6px 25px rgba(240,180,41,.4);transform:translateY(-1px)}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────────── */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:4rem 5% 2rem}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand .logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.4rem;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.8rem}
+.footer-brand p{font-size:.85rem;color:var(--muted);line-height:1.75;max-width:250px}
+.footer-col h4{font-family:'Outfit',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.footer-col ul li a{font-size:.85rem;color:var(--muted);transition:color .2s}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.78rem;color:var(--dim)}
+.wa-float{
+  position:fixed;bottom:2rem;right:2rem;z-index:500;
+  width:58px;height:58px;background:#25d366;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:#fff;box-shadow:0 4px 20px rgba(37,211,102,.5);
+  transition:all .25s;animation:waFloat 3s ease infinite;
+}
+.wa-float:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(37,211,102,.7)}
+.wa-float-tooltip{
+  position:absolute;right:70px;background:var(--card);color:var(--text);
+  font-size:.75rem;padding:.4rem .8rem;border-radius:8px;border:1px solid var(--border);
+  white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;
+  box-shadow:var(--shadow);
+}
+.wa-float:hover .wa-float-tooltip{opacity:1}
+@keyframes waFloat{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 35px rgba(37,211,102,.8)}}
+
+/* ── ANIMATIONS ─────────────────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── MOBILE ──────────────────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .nav-links.open{
+    display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;
+    background:rgba(7,7,15,.98);backdrop-filter:blur(20px);padding:2rem;
+    border-bottom:1px solid var(--border);gap:1.5rem;
+  }
+  .contact-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .hero-stats{gap:1.5rem}
+  .steps-grid::before{display:none}
+}
+@media(max-width:600px){
+  .nav-actions .btn-nav-login{display:none}
+  .footer-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="/" class="nav-logo">TIZIAN AI</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    {% if logged_in %}
+      <a href="/dashboard" class="btn-nav-login">Dashboard</a>
+    {% else %}
+      <a href="/login" class="btn-nav-login">Sign In</a>
+      <a href="/signup" class="btn-nav-cta">Get Started</a>
+    {% endif %}
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><i class="fas fa-circle-dot"></i> Live AI — Responding 24/7</div>
+  <h1 class="hero-title">Your AI Business<br><span>Assistant That Closes</span><br>While You Sleep</h1>
+  <p class="hero-sub">Tizian AI qualifies leads, answers customers, and converts visitors into paying clients — automatically, around the clock, without lifting a finger.</p>
+  <div class="hero-cta">
+    <a href="/signup" class="btn-primary"><i class="fas fa-rocket"></i> Get Started Free</a>
+    <a href="https://wa.me/254742251656?text=Hello!%20I'm%20interested%20in%20Tizian%20AI%20Business%20Assistant." target="_blank" class="btn-whatsapp">
+      <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">10K+</div><div class="stat-lbl">Businesses Served</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">Always Active</div></div>
+    <div class="stat"><div class="stat-num">3.8×</div><div class="stat-lbl">Avg Lead Conversion</div></div>
+    <div class="stat"><div class="stat-num">99.9%</div><div class="stat-lbl">Uptime Guarantee</div></div>
+  </div>
+</section>
+
+<!-- TRUSTED BY -->
+<div class="logos-section">
+  <p class="logos-label">Trusted by businesses worldwide</p>
+  <div class="logos-track" id="logoTrack">
+    <span>AGENCY PRO</span><span>NEXUS CORP</span><span>BRIGHTWAVE</span>
+    <span>DELTA MEDIA</span><span>SKYLINE CO</span><span>PINNACLE GROUP</span>
+    <span>APEX DIGITAL</span><span>VORTEX INC</span><span>LUMINARY</span>
+    <!-- Duplicate for seamless loop -->
+    <span>AGENCY PRO</span><span>NEXUS CORP</span><span>BRIGHTWAVE</span>
+    <span>DELTA MEDIA</span><span>SKYLINE CO</span><span>PINNACLE GROUP</span>
+    <span>APEX DIGITAL</span><span>VORTEX INC</span><span>LUMINARY</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="text-center reveal">
+    <div class="section-label"><i class="fas fa-sparkles"></i> Features</div>
+    <h2 class="section-title">Everything Your Business<br><span class="grad-text">Needs to Grow</span></h2>
+    <p class="section-sub">Powerful AI tools built for modern businesses that want to scale without scaling their headcount.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+      <h3>Instant Lead Response</h3>
+      <p>Respond to every lead within seconds — not hours. Our AI engages prospects instantly before they lose interest and go to a competitor.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-filter"></i></div>
+      <h3>Smart Lead Qualification</h3>
+      <p>Automatically qualify leads by asking the right questions. Only serious buyers reach your calendar, saving you hours of wasted calls.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-clock"></i></div>
+      <h3>24/7 Availability</h3>
+      <p>Your AI assistant never sleeps, never takes breaks. Capture leads at 3 AM on a Sunday just as effectively as peak business hours.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-brain"></i></div>
+      <h3>Conversational AI</h3>
+      <p>Natural, human-like conversations that build trust and rapport. Customers don't even know they're talking to AI until you tell them.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>Analytics Dashboard</h3>
+      <p>Track every conversation, monitor conversion rates, and get actionable insights to continuously improve your lead funnel.</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon"><i class="fas fa-plug"></i></div>
+      <h3>Seamless Integration</h3>
+      <p>Connect with your existing CRM, WhatsApp, email, and booking systems. Tizian AI slots into your workflow without disruption.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="text-center reveal">
+    <div class="section-label"><i class="fas fa-map"></i> Process</div>
+    <h2 class="section-title">Up and Running in<br><span class="grad-text">4 Simple Steps</span></h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <h3>Sign Up</h3>
+      <p>Create your account in 60 seconds. No credit card required to get started.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <h3>Choose a Plan</h3>
+      <p>Pick the plan that fits your business and complete payment via PayPal.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <h3>Get Activated</h3>
+      <p>Send proof of payment via WhatsApp and our team activates your account within hours.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">4</div>
+      <h3>Start Converting</h3>
+      <p>Your AI assistant goes live and starts qualifying leads and converting customers immediately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="text-center reveal">
+    <div class="section-label"><i class="fas fa-tag"></i> Pricing</div>
+    <h2 class="section-title">Simple, Transparent<br><span class="grad-text">Pricing</span></h2>
+    <p class="section-sub">Choose the plan that fits your business. All plans include core AI features with no hidden fees.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal">
+      <div class="price-plan">Starter</div>
+      <div class="price-amount"><sup>$</sup>49<span>/mo</span></div>
+      <p class="price-desc">Perfect for freelancers and small businesses getting started with AI.</p>
+      <ul class="price-features">
+        <li><i class="fas fa-check"></i> AI Business Assistant</li>
+        <li><i class="fas fa-check"></i> 500 conversations/month</li>
+        <li><i class="fas fa-check"></i> Lead qualification</li>
+        <li><i class="fas fa-check"></i> Email support</li>
+        <li class="muted"><i class="fas fa-times"></i> Analytics dashboard</li>
+        <li class="muted"><i class="fas fa-times"></i> Custom integrations</li>
+      </ul>
+      <a href="/signup" class="btn-plan btn-plan-outline">Get Started</a>
+    </div>
+    <div class="pricing-card popular reveal">
+      <div class="popular-badge">⭐ Most Popular</div>
+      <div class="price-plan">Professional</div>
+      <div class="price-amount" style="color:var(--gold)"><sup>$</sup>149<span>/mo</span></div>
+      <p class="price-desc">Full power for growing businesses serious about converting leads.</p>
+      <ul class="price-features">
+        <li><i class="fas fa-check"></i> Everything in Starter</li>
+        <li><i class="fas fa-check"></i> Unlimited conversations</li>
+        <li><i class="fas fa-check"></i> Full automation suite</li>
+        <li><i class="fas fa-check"></i> Analytics dashboard</li>
+        <li><i class="fas fa-check"></i> Priority support (24h)</li>
+        <li class="muted"><i class="fas fa-times"></i> White-label</li>
+      </ul>
+      <a href="/signup" class="btn-plan btn-plan-primary">Get Started</a>
+    </div>
+    <div class="pricing-card reveal">
+      <div class="price-plan">Enterprise</div>
+      <div class="price-amount">Custom</div>
+      <p class="price-desc">Tailored solutions for agencies and enterprises with unique requirements.</p>
+      <ul class="price-features">
+        <li><i class="fas fa-check"></i> Everything in Professional</li>
+        <li><i class="fas fa-check"></i> White-label solution</li>
+        <li><i class="fas fa-check"></i> Full API access</li>
+        <li><i class="fas fa-check"></i> Dedicated account manager</li>
+        <li><i class="fas fa-check"></i> Custom AI training</li>
+        <li><i class="fas fa-check"></i> SLA guarantee</li>
+      </ul>
+      <a href="https://wa.me/254742251656?text=I'm%20interested%20in%20the%20Enterprise%20plan." target="_blank" class="btn-plan btn-plan-outline">Contact Us</a>
+    </div>
+  </div>
+
+  <div class="payment-info reveal">
+    <h4>💳 How to Pay & Get Activated</h4>
+    <p>We use manual payment verification for maximum security. Send your payment and get activated by a human within hours.</p>
+    <div class="payment-steps">
+      <div class="pay-step"><i class="fab fa-paypal"></i> Pay via PayPal to <strong>&nbsp;kingtizian008@gmail.com</strong></div>
+      <div class="pay-step"><i class="fab fa-whatsapp"></i> Send proof to WhatsApp &nbsp;<strong>+254 742 251 656</strong></div>
+      <div class="pay-step"><i class="fas fa-check-circle"></i> Get activated within <strong>&nbsp;2–4 hours</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section">
+  <div class="section-label"><i class="fas fa-fire"></i> Get Started Today</div>
+  <h2 class="section-title">Stop Losing Leads to<br><span class="grad-text">Slow Response Times</span></h2>
+  <p class="section-sub">Every minute you wait, a potential customer is going to your competitor. Set up your AI assistant today.</p>
+  <div class="cta-btns">
+    <a href="/signup" class="btn-primary"><i class="fas fa-rocket"></i> Start Free Today</a>
+    <a href="https://wa.me/254742251656?text=Hello!%20I'd%20like%20to%20learn%20more%20about%20Tizian%20AI." target="_blank" class="btn-whatsapp">
+      <i class="fab fa-whatsapp"></i> Contact on WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="reveal">
+    <div class="section-label"><i class="fas fa-envelope"></i> Contact</div>
+    <h2 class="section-title">Get in Touch</h2>
+    <p class="section-sub">Have questions before signing up? We're here to help you make the right decision for your business.</p>
+  </div>
+  <div class="contact-grid" style="margin-top:3rem">
+    <div class="contact-items reveal">
+      <div class="contact-item">
+        <div class="contact-item-icon green"><i class="fab fa-whatsapp"></i></div>
+        <div>
+          <h4>WhatsApp (Fastest)</h4>
+          <p>Chat directly with our team</p>
+          <a href="https://wa.me/254742251656" target="_blank">+254 742 251 656</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon gold"><i class="fab fa-paypal"></i></div>
+        <div>
+          <h4>Payment (PayPal)</h4>
+          <p>Send payment to activate your account</p>
+          <a href="https://paypal.me/kingtizian008" target="_blank">kingtizian008@gmail.com</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon blue"><i class="fas fa-envelope"></i></div>
+        <div>
+          <h4>Email Support</h4>
+          <p>For non-urgent inquiries</p>
+          <a href="mailto:support@tizian.ai">support@tizian.ai</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-item-icon gold"><i class="fas fa-clock"></i></div>
+        <div>
+          <h4>Response Time</h4>
+          <p>WhatsApp: Under 1 hour · Email: Within 24 hours · AI: Instant</p>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form reveal">
+      <h3>Send Us a Message</h3>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" placeholder="Your name" id="cf-name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com" id="cf-email">
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="How can we help your business?" id="cf-msg"></textarea>
+      </div>
+      <button class="btn-contact" onclick="sendContactWA()">
+        <i class="fab fa-whatsapp"></i> Send via WhatsApp
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">TIZIAN AI</div>
+      <p>AI-powered business automation that converts visitors into clients automatically, 24 hours a day.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="/signup">Get Started</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        <li><a href="/login">Sign In</a></li>
+        <li><a href="/signup">Sign Up</a></li>
+        <li><a href="/dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="https://wa.me/254742251656" target="_blank">WhatsApp</a></li>
+        <li><a href="mailto:support@tizian.ai">Email Support</a></li>
+        <li><a href="https://paypal.me/kingtizian008" target="_blank">PayPal</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Tizian AI Solutions. All rights reserved.</p>
+    <p>Payment: <strong style="color:var(--gold)">kingtizian008@gmail.com</strong> &nbsp;|&nbsp; WhatsApp: <strong style="color:var(--green)">+254 742 251 656</strong></p>
+  </div>
+</footer>
+
+<!-- FLOATING WHATSAPP -->
+<a class="wa-float" href="https://wa.me/254742251656?text=Hello!%20I'm%20interested%20in%20Tizian%20AI." target="_blank">
+  <div class="wa-float-tooltip">Chat with us</div>
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);
+});
+
+// Mobile menu
+function toggleMenu(){
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Contact via WhatsApp
+function sendContactWA(){
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  if(!name||!msg){alert('Please fill in your name and message.');return;}
+  const text = `Hello Tizian AI!\n\nName: ${name}\nEmail: ${email}\n\nMessage: ${msg}`;
+  window.open(`https://wa.me/254742251656?text=${encodeURIComponent(text)}`, '_blank');
+}
+</script>
+</body>
+</html>

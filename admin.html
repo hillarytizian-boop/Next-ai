@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — Tizian AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07070f;--bg2:#0c0c1a;--card:#10101e;--border:#1e1e35;--gold:#f0b429;--gold2:#ffd166;--green:#25d366;--red:#f05454;--blue:#4f8ef7;--text:#e8e8f5;--muted:#8888aa;--dim:#3a3a55}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+.topbar{height:60px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 2rem;gap:1rem}
+.topbar-logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+.admin-badge{padding:.25rem .7rem;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.25);border-radius:50px;font-size:.7rem;color:var(--gold);font-family:'Outfit',sans-serif;font-weight:700}
+.topbar-right{margin-left:auto;display:flex;gap:.75rem;align-items:center}
+.topbar-link{padding:.45rem 1rem;border-radius:8px;font-size:.78rem;text-decoration:none;color:var(--muted);border:1px solid var(--border);transition:all .2s}
+.topbar-link:hover{border-color:var(--gold);color:var(--gold)}
+.content{padding:2rem;max-width:1200px;margin:0 auto}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.page-header h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.8rem;letter-spacing:-.02em}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem}
+.stat-card .num{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;line-height:1}
+.stat-card .lbl{font-size:.75rem;color:var(--muted);margin-top:.3rem;letter-spacing:.05em;text-transform:uppercase}
+.stat-card.gold .num{color:var(--gold)}
+.stat-card.green .num{color:var(--green)}
+.stat-card.blue .num{color:var(--blue)}
+.stat-card.red .num{color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.panel-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-header h2{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem}
+.search-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.45rem .9rem;color:var(--text);font-size:.82rem;outline:none;width:220px;font-family:'Inter',sans-serif}
+.search-box:focus{border-color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.9rem 1.2rem;text-align:left;border-bottom:1px solid var(--border);font-weight:600;background:rgba(255,255,255,.01)}
+td{padding:.9rem 1.2rem;font-size:.85rem;border-bottom:1px solid rgba(30,30,53,.5)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .65rem;border-radius:50px;font-size:.72rem;font-weight:600}
+.badge-paid{background:rgba(37,211,102,.12);color:var(--green);border:1px solid rgba(37,211,102,.25)}
+.badge-unpaid{background:rgba(240,84,84,.1);color:var(--red);border:1px solid rgba(240,84,84,.2)}
+.badge-admin{background:rgba(240,180,41,.1);color:var(--gold);border:1px solid rgba(240,180,41,.2)}
+.action-btns{display:flex;gap:.4rem}
+.btn-sm{padding:.35rem .8rem;border-radius:6px;font-size:.75rem;font-family:'Outfit',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:.3rem}
+.btn-activate{background:rgba(37,211,102,.1);color:var(--green);border:1px solid rgba(37,211,102,.25)}
+.btn-activate:hover{background:rgba(37,211,102,.2)}
+.btn-deactivate{background:rgba(240,84,84,.1);color:var(--red);border:1px solid rgba(240,84,84,.2)}
+.btn-deactivate:hover{background:rgba(240,84,84,.2)}
+.btn-delete{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border)}
+.btn-delete:hover{background:rgba(240,84,84,.1);color:var(--red);border-color:rgba(240,84,84,.3)}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;font-size:.85rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.6);transform:translateY(100px);transition:transform .3s;z-index:999}
+.toast.show{transform:translateY(0)}
+.toast.success{border-color:rgba(37,211,102,.3);color:var(--green)}
+.toast.error{border-color:rgba(240,84,84,.3);color:var(--red)}
+.email-cell{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:700px){.content{padding:1rem}.stats-row{grid-template-columns:1fr 1fr}th:nth-child(3),td:nth-child(3),th:nth-child(4),td:nth-child(4){display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="topbar-logo">TIZIAN AI</a>
+  <span class="admin-badge"><i class="fas fa-shield-alt"></i> Admin Panel</span>
+  <div class="topbar-right">
+    <a href="/dashboard" class="topbar-link"><i class="fas fa-robot"></i> Dashboard</a>
+    <a href="/logout" class="topbar-link"><i class="fas fa-sign-out-alt"></i></a>
+  </div>
+</div>
+
+<div class="content">
+  <div class="page-header">
+    <h1>User Management</h1>
+    <span style="font-size:.82rem;color:var(--muted)">Logged in as <strong style="color:var(--gold)">{{ current_user.email }}</strong></span>
+  </div>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card gold"><div class="num" id="statTotal">{{ users|length }}</div><div class="lbl">Total Users</div></div>
+    <div class="stat-card green"><div class="num" id="statPaid">{{ users|selectattr('is_paid')|list|length }}</div><div class="lbl">Active (Paid)</div></div>
+    <div class="stat-card red"><div class="num" id="statUnpaid">{{ users|rejectattr('is_paid')|list|length }}</div><div class="lbl">Pending Payment</div></div>
+    <div class="stat-card blue"><div class="num" id="statAdmin">{{ users|selectattr('is_admin')|list|length }}</div><div class="lbl">Admins</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h2><i class="fas fa-users" style="color:var(--gold);margin-right:.5rem"></i> All Users</h2>
+      <input class="search-box" type="text" placeholder="Search users..." oninput="filterTable(this.value)">
+    </div>
+    <div style="overflow-x:auto">
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Joined</th>
+          <th>Status</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersBody">
+        {% for u in users %}
+        <tr id="row-{{ u.id }}" data-email="{{ u.email }}" data-name="{{ u.full_name or '' }}">
+          <td style="color:var(--dim)">#{{ u.id }}</td>
+          <td class="email-cell" title="{{ u.email }}">{{ u.email }}</td>
+          <td>{{ u.full_name or '—' }}</td>
+          <td style="color:var(--muted)">{{ u.created_at.strftime('%d %b %Y') if u.created_at else '—' }}</td>
+          <td>
+            <span class="badge {% if u.is_paid %}badge-paid{% else %}badge-unpaid{% endif %}" id="status-{{ u.id }}">
+              {% if u.is_paid %}<i class="fas fa-check-circle"></i> Active{% else %}<i class="fas fa-clock"></i> Pending{% endif %}
+            </span>
+          </td>
+          <td>
+            {% if u.is_admin %}<span class="badge badge-admin"><i class="fas fa-shield-alt"></i> Admin</span>
+            {% else %}<span style="font-size:.78rem;color:var(--muted)">User</span>{% endif %}
+          </td>
+          <td>
+            <div class="action-btns">
+              {% if not u.is_paid %}
+              <button class="btn-sm btn-activate" onclick="activateUser({{ u.id }})">
+                <i class="fas fa-check"></i> Activate
+              </button>
+              {% else %}
+              <button class="btn-sm btn-deactivate" onclick="deactivateUser({{ u.id }})">
+                <i class="fas fa-ban"></i> Deactivate
+              </button>
+              {% endif %}
+              {% if not u.is_admin %}
+              <button class="btn-sm btn-delete" onclick="deleteUser({{ u.id }}, '{{ u.email }}')">
+                <i class="fas fa-trash"></i>
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<i class="fas fa-${type==='success'?'check-circle':'exclamation-circle'}"></i> ${msg}`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+async function activateUser(id){
+  try{
+    const r=await fetch(`/api/admin/activate/${id}`,{method:'POST'});
+    const d=await r.json();
+    if(r.ok){
+      const row=document.getElementById(`row-${id}`);
+      const statusEl=document.getElementById(`status-${id}`);
+      statusEl.className='badge badge-paid';
+      statusEl.innerHTML='<i class="fas fa-check-circle"></i> Active';
+      const btns=row.querySelector('.action-btns');
+      const del=btns.querySelector('.btn-delete');
+      btns.innerHTML=`<button class="btn-sm btn-deactivate" onclick="deactivateUser(${id})"><i class="fas fa-ban"></i> Deactivate</button>`;
+      if(del)btns.appendChild(del);
+      showToast(`Activated: ${d.user.email}`,'success');
+    }else{showToast('Error: '+d.error,'error');}
+  }catch(e){showToast('Request failed','error');}
+}
+
+async function deactivateUser(id){
+  if(!confirm('Deactivate this user?'))return;
+  try{
+    const r=await fetch(`/api/admin/deactivate/${id}`,{method:'POST'});
+    const d=await r.json();
+    if(r.ok){
+      const row=document.getElementById(`row-${id}`);
+      const statusEl=document.getElementById(`status-${id}`);
+      statusEl.className='badge badge-unpaid';
+      statusEl.innerHTML='<i class="fas fa-clock"></i> Pending';
+      const btns=row.querySelector('.action-btns');
+      const del=btns.querySelector('.btn-delete');
+      btns.innerHTML=`<button class="btn-sm btn-activate" onclick="activateUser(${id})"><i class="fas fa-check"></i> Activate</button>`;
+      if(del)btns.appendChild(del);
+      showToast(`Deactivated: ${d.user.email}`,'error');
+    }else{showToast('Error: '+d.error,'error');}
+  }catch(e){showToast('Request failed','error');}
+}
+
+async function deleteUser(id, email){
+  if(!confirm(`Permanently delete user ${email}? This cannot be undone.`))return;
+  try{
+    const r=await fetch(`/api/admin/delete/${id}`,{method:'DELETE'});
+    const d=await r.json();
+    if(r.ok){
+      document.getElementById(`row-${id}`).remove();
+      showToast(`Deleted: ${email}`,'success');
+    }else{showToast('Error: '+d.error,'error');}
+  }catch(e){showToast('Request failed','error');}
+}
+
+function filterTable(q){
+  q=q.toLowerCase();
+  document.querySelectorAll('#usersBody tr').forEach(row=>{
+    const email=row.dataset.email||'';
+    const name=row.dataset.name||'';
+    row.style.display=(email.includes(q)||name.includes(q))?'':'none';
+  });
+}
+</script>
+</body>
+</html>
